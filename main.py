@@ -375,7 +375,7 @@ def TrackImages():
             faceDis = face_recognition.face_distance(encode_list_known, encodeFace)
 
             best_match_index = np.argmin(faceDis)
-            # print(f"#######{image[best_match_index]} ##########")
+            print(f"#######{image[best_match_index]} ##########")
 
 
             pat = str(classNames[best_match_index])
