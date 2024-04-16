@@ -17,6 +17,8 @@ import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 from plotly.subplots import make_subplots
 import plotly.offline as pyo
+import matplotlib
+matplotlib.use('TkAgg')
 
 ############################################# FUNCTIONS ################################################
 
@@ -335,6 +337,7 @@ def getImagesAndLabels(path):
 ###########################################################################################
 
 def TrackImages():
+    global best_match_index, matches, faceDis
     encode_list_known = find_encodings(image)
     print('Encoding Complete')
 
@@ -504,7 +507,15 @@ def TrackImages():
                 start_time = time.time()
         except:
             print("Adding in file...")
+        conf = 0.0
+
+        rounded_score = 0.00
+
+        if matches[best_match_index]:
+            conf = faceDis[best_match_index]
+            rounded_score = round(conf, 2)
         cv2.putText(frame, f"Head Status: {head_status}", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+        cv2.putText(frame, f"Confidence: {rounded_score}", (10, 130), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
         cv2.putText(frame, f"Eye Status: {eye_status}", (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
         cv2.putText(frame, f"Attentiveness: {attentiveness}", (10, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
