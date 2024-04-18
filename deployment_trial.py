@@ -2,6 +2,7 @@ import csv
 import os
 import cv2
 import face_recognition
+import numpy as np
 
 
 def preProcessImages():
@@ -19,7 +20,22 @@ def preProcessImages():
         classNames.append(os.path.split(cl)[1].split('.')[0])
         idNames.append(os.path.split(cl)[1].split('.')[1])
         mailNames.append(os.path.split(cl)[1].split('.')[2])
-    return image, classNames
+    return image, classNames, idNames
+
+
+def find_encodings(images, classNames, idNames):
+    encode_list = []
+    names = []
+    for idx,img_1 in enumerate(images):
+        img_1 = cv2.cvtColor(img_1, cv2.COLOR_BGR2RGB)
+        encode = face_recognition.face_encodings(img_1)
+        if len(encode) == 0:
+            print("No Face Detected in Image")
+            continue
+        encode = encode[0]
+        names.append(classNames[idx])
+        encode_list.append(encode)
+    return encode_list, names
 
 
 def trainModelOnNewPerson():
@@ -117,23 +133,51 @@ def recognize_faces_in_video(saved_encodings, names):
     cv2.destroyAllWindows()
 
 
-def find_encodings(images):
-    encode_list = []
-    cnt = 0
-    for img_1 in images:
-        try:
-            cnt += 1
-            img_1 = cv2.cvtColor(img_1, cv2.COLOR_BGR2RGB)
-            encode = face_recognition.face_encodings(img_1)[0]
-            encode_list.append(encode)
-        except:
-            print("Some Exception in Encoding...")
-    return encode_list
-
-
 if __name__ == "__main__":
-    preProcessImages()
     # # trainModelOnNewPerson()
-    image, names = preProcessImages()
-    encodeList = find_encodings(images=image)
-    recognize_faces_in_video(encodeList, names)
+    image, names , ids= preProcessImages()
+    print("Images Loaded Successfully...")
+    # print(image) # Puri image hi h to uske rgb values print ho rhe h
+    print("Names are")
+    print(names)
+    encodeList, correspondingNames = find_encodings(images=image, classNames = names , idNames = ids)
+    print(len(correspondingNames))
+    print("Encoding Completed Successfully...")
+    print(len(encodeList))
+    print(correspondingNames)
+    # recognize_faces_in_video(encodeList, names)
+
+
+# def recognize_faces_api(rgb_frame, saved_encodings, names):
+#
+#
+#     # Find all face locations and encodings in the frame
+#     face_locations = face_recognition.face_locations(rgb_frame)
+#     face_encodings = face_recognition.face_encodings(rgb_frame, face_locations)
+#
+#     # Loop through each face found in the frame
+#     for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+#         # Compare face encodings with saved encodings
+#         matches = face_recognition.compare_faces(saved_encodings, face_encoding)
+#         name = "Unknown"  # Default name if no match found
+#
+#         # Check for a match
+#         if True in matches:
+#             first_match_index = matches.index(True)
+#             name = names[first_match_index]  # Get the corresponding name
+#
+#         l1 = [top, right, left, bottom]
+#         return jsonify({'personInImage':name, 'faceMarks':l1}), 200
+    # d = {}
+    # if 'image' not in request.files:
+    #     return jsonify({'error': 'No image file provided'}), 400
+    #
+    # image_file = request.files['image']
+    #
+    # # Call the recognize_faces function with the image file
+    # # recognized_faces = recognize_faces(image_file)
+    #
+    # img_1 = cv2.cvtColor(image_file, cv2.COLOR_BGR2RGB)
+    # encode = face_recognition.face_encodings(img_1)[0]
+    # d['encodings'] = encode
+    # return jsonify({'recognized_faces': encode}), 200
