@@ -1,5 +1,7 @@
 import csv
 import os
+import pickle
+
 import cv2
 import face_recognition
 import numpy as np
@@ -132,19 +134,17 @@ def recognize_faces_in_video(saved_encodings, names):
     video_capture.release()
     cv2.destroyAllWindows()
 
+def save_lists(list1, list2, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump((list1, list2), f)
 
 if __name__ == "__main__":
     # # trainModelOnNewPerson()
     image, names , ids= preProcessImages()
     print("Images Loaded Successfully...")
-    # print(image) # Puri image hi h to uske rgb values print ho rhe h
-    print("Names are")
-    print(names)
     encodeList, correspondingNames = find_encodings(images=image, classNames = names , idNames = ids)
-    print(len(correspondingNames))
-    print("Encoding Completed Successfully...")
-    print(len(encodeList))
-    print(correspondingNames)
+    save_lists(encodeList, correspondingNames, 'encodings.pkl')
+    print("encodings.pkl` file saved successfully...")
     # recognize_faces_in_video(encodeList, names)
 
 
