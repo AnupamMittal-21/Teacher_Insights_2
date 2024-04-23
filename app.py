@@ -8,48 +8,59 @@ import cv2
 import numpy as np
 
 app = Flask(__name__)
+
+
 def angle_between_points(p1, p2, p3):
     angle = abs(p2 - p1) - abs(p2 - p3)
     return angle
+
 
 @app.route('/recognize_faces', methods=['POST', 'GET'])
 def recognize_faces_api():
     if request.method == 'GET':
         return jsonify({'response': "Heyy GET request"}), 200
+
     elif request.method == 'POST':
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
-
-        image_file = request.files['image']
-
-        # Read the image file
-        image = face_recognition.load_image_file(image_file)
 
         with open("encodings.pkl", 'rb') as f:
             saved_encodings, names = pickle.load(f)
         print('Encoding File Loaded Successfully...')
 
+        # Get the image file from the POST request
+        image_file = request.files['image']
+
+        # Read the image file and convert to image format that is supported by OpenCV
+        image = face_recognition.load_image_file(image_file)
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # Load the face detector and landmark predictor
         face_detector = dlib.get_frontal_face_detector()
         landmark_predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-        # Threshold values:
+        # Threshold values: (HyperParameters)
         head_down_threshold = 3
         eye_aspect_ratio_threshold = 0.2
 
         # Variables to store the state of the student
-        global best_match_index, matches, faceDis
         facesInfo = []
         Status = []
 
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Detect faces in the image using the face detector and returns the rectangles of the faces (NOT USED)
         faces = face_detector(gray)
-        print(faces) # Prints the rectangles of the faces in the image
 
         # Find all face locations and encodings in the frame
+        # Returns List of Faces in the form of Top, Right, Bottom, Left
         facesCurFrame = face_recognition.face_locations(image)
         encodesCurFrame = face_recognition.face_encodings(image, facesCurFrame)
 
+        ts = time.time()
+        frameDate = datetime.datetime.fromtimestamp(ts).strftime('%d-%m-%Y')
+        frameTime = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+
         for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
+            # Compare the faces in the frame with the saved encodings
             matches = face_recognition.compare_faces(saved_encodings, encodeFace)
             faceDis = face_recognition.face_distance(saved_encodings, encodeFace)
 
@@ -59,26 +70,19 @@ def recognize_faces_api():
             confidence_threshold = 0.5
 
             faceInfo = {}
-            ts = time.time()
-            date = datetime.datetime.fromtimestamp(ts).strftime('%d-%m-%Y')
-            timeStamp = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
             if matches[best_match_index] and faceDis[best_match_index] < confidence_threshold:
                 # Face recognized with confidence
-                faceLoc_ = faceLoc
-                attendance = [str(1), '', 1 - faceDis[best_match_index], '', name_, '', str(date), '', str(timeStamp)]
                 faceInfo['name'] = name_
-                faceInfo['faceLoc'] = faceLoc_
+                faceInfo['faceLoc'] = faceLoc
                 faceInfo['confidence'] = 1 - faceDis[best_match_index]
             else:
                 faceInfo['name'] = "UNKNOWN"
                 faceInfo['faceLoc'] = None
                 faceInfo['confidence'] = 0
-            faceInfo['date'] = date
-            faceInfo['timeStamp'] = timeStamp
-            facesInfo.append(faceInfo)
 
-        # Loop through each face found in the frame
-        for face in faces:
+            # Converting the face to a dlib rectangle
+            top, right, bottom, left = faceLoc
+            face = dlib.rectangle(left, top, right, bottom)
             landmarks = landmark_predictor(gray, face)
 
             # Extract the relevant facial landmarks (e.g., points around the eyes)
@@ -122,14 +126,15 @@ def recognize_faces_api():
             else:
                 attentiveness = "Not Attentive"
 
-            status = {'HeadStatus': head_status, 'EyeStatus': eye_status, 'Attentiveness': attentiveness}
+            faceInfo['HeadStatus'] = head_status
+            faceInfo['EyeStatus'] = eye_status
+            faceInfo['Attentiveness']= attentiveness
+            facesInfo.append(faceInfo)
 
-            Status.append(status)
+        return jsonify({'DateFrame':frameDate,'TimeFrame':frameTime,'Details of Attendance': facesInfo}), 200
 
-        return jsonify({'Status': Status, 'Details of Attendance': facesInfo}), 200
-
-@app.route('/trial', methods=['POST', 'GET'])
-def gettt():
+@app.route('/check', methods=['POST', 'GET'])
+def check():
     if request.method == 'GET':
         return jsonify({'response': "Heyy GET request"}), 200
     else:
