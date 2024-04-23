@@ -1,7 +1,6 @@
 import threading
 
 import cv2, os
-from collections import deque
 import csv
 import numpy as np
 from PIL import Image

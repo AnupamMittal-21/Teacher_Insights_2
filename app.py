@@ -51,5 +51,13 @@ def recognize_faces_api():
 
         return jsonify({'personInImage': 'Unknown', 'faceMarks': [top, right, left, bottom]}), 200
 
+@app.route('/trial', methods=['POST', 'GET'])
+def gettt():
+    if request.method == 'GET':
+        return jsonify({'response': "Heyy GET request"}), 200
+    else :
+        return jsonify({'response': "Heyy POST request"}), 200
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
