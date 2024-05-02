@@ -18,6 +18,7 @@ import plotly.graph_objects as go
 from matplotlib import pyplot as plt
 from plotly.subplots import make_subplots
 import plotly.offline as pyo
+import plotly.io as pio
 import matplotlib
 
 matplotlib.use('TkAgg')
@@ -450,8 +451,18 @@ def recognize_faces_in_video(saved_encodings, names):
 
 ###########################################################################################
 
+def getUniques(names):
+    uniqueNames = []
+    for name in names:
+        if name not in uniqueNames:
+            uniqueNames.append(name)
+    return uniqueNames
+
 
 def recognize_faces_api(saved_encodings, names):
+    uniqueNames = getUniques(names)
+
+    student_dataframes = {name: pd.DataFrame(columns=['Date', 'Value', 'Cumulative_Value']) for name in uniqueNames}
 
     # Load the face detector and landmark predictor
     face_detector = dlib.get_frontal_face_detector()
@@ -463,7 +474,6 @@ def recognize_faces_api(saved_encodings, names):
 
     # Variables to store the state of the student
     facesInfo = []
-    Status = []
 
     cap = cv2.VideoCapture(0)
 
@@ -473,9 +483,6 @@ def recognize_faces_api(saved_encodings, names):
             break
 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        # Detect faces in the image using the face detector and returns the rectangles of the faces (NOT USED)
-        faces = face_detector(gray)
 
         # Find all face locations and encodings in the frame
         # Returns List of Faces in the form of Top, Right, Bottom, Left
@@ -514,7 +521,6 @@ def recognize_faces_api(saved_encodings, names):
 
             y1, x2, y2, x1 = faceLoc
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 1)
-            print(faceLoc)
 
             # Converting the face to a dlib rectangle
             top, right, bottom, left = faceLoc
@@ -562,14 +568,47 @@ def recognize_faces_api(saved_encodings, names):
             else:
                 attentiveness = "Not Attentive"
 
+            attval = 0
+
+            if eye_status == "Eyes Open" and head_status == "Head Up":
+                attval = 2
+            elif eye_status =='Eyes Closed' and head_status == 'Head Up':
+                attval = -1
+            elif eye_status == 'Eyes Open' and head_status == 'Head Down':
+                attval = -1
+            else:
+                attval = -2
+
             faceInfo['HeadStatus'] = head_status
             faceInfo['EyeStatus'] = eye_status
             faceInfo['Attentiveness'] = attentiveness
+            faceInfo['AttVal'] = attval
             cv2.putText(frame, faceInfo['HeadStatus'], (x1 + 6, y2 - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
             cv2.putText(frame, faceInfo['EyeStatus'], (x1 + 6, y2 - 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
             cv2.putText(frame, faceInfo['Attentiveness'], (x1 + 6, y2 - 55), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
             cv2.putText(frame, faceInfo['name'], (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 0.5, (255, 255, 255),1)
             facesInfo.append(faceInfo)
+
+            # date_timestamp = pd.to_datetime(frameTime)
+            date_timestamp = frameTime
+            name = faceInfo['name']
+
+            print(name, date_timestamp, attval)
+
+            if name in student_dataframes:
+                # Check if the DataFrame is empty
+                if student_dataframes[name].empty:
+                    # If empty, initialize it with the first row
+                    student_dataframes[name] = pd.DataFrame([[date_timestamp, 0, 0]],
+                                                            columns=['Date', 'Value', 'Cumulative_Value'])
+                else:
+                    # If not empty, append a new row with cumulative value
+                    cumulative_value = student_dataframes[name]['Cumulative_Value'].iloc[-1] + attval
+                    temp_df = pd.DataFrame([[date_timestamp, attval, cumulative_value]], columns=student_dataframes[name].columns)
+                    student_dataframes[name] = pd.concat([student_dataframes[name], temp_df], ignore_index=True)
+            else:
+                print(f"Student '{name}' not found in the list of students.")
+
 
         cv2.imshow('Live Class Monitoring', frame)
         try:
@@ -578,15 +617,33 @@ def recognize_faces_api(saved_encodings, names):
                 break
             elif key == ord('c'):
                 print("Pressing c...")
-                # Check attentiveness on demand
-                # on_demand_score = activity_history.count("Attentive") / len(activity_history)
-                # print(f"On-demand Attentiveness: {on_demand_score * 100:.2f}%")
         except:
             print("Tapping q...")
 
+        update_plot(student_dataframes)
+
     cap.release()
     cv2.destroyAllWindows()
+    print(student_dataframes)
 
+
+def update_plot(student_dataframes):
+    # Clear previous traces
+    traces = []
+    for name, df in student_dataframes.items():
+        trace = go.Scatter(x=df['Date'], y=df['Cumulative_Value'], mode='lines+markers', name=name)
+        traces.append(trace)
+
+    # Layout
+    layout = go.Layout(title='Cumulative Value Over Time', xaxis=dict(title='Date'),
+                       yaxis=dict(title='Cumulative Value'))
+
+    # Create figure
+    fig = go.Figure(data=traces, layout=layout)
+
+    # Plot
+    pio.show(fig)
+    time.sleep(1)
 ######################################## USED STUFFS ############################################
 
 global key
