@@ -609,7 +609,6 @@ def recognize_faces_api(saved_encodings, names):
             else:
                 print(f"Student '{name}' not found in the list of students.")
 
-
         cv2.imshow('Live Class Monitoring', frame)
         try:
             key = cv2.waitKey(1) & 0xFF
@@ -624,7 +623,6 @@ def recognize_faces_api(saved_encodings, names):
 
     cap.release()
     cv2.destroyAllWindows()
-    print(student_dataframes)
 
 
 def update_plot(student_dataframes):
@@ -676,10 +674,10 @@ window.resizable(True, False)
 window.title("Attendance System")
 window.configure(background='#262523')
 
-frame1 = tk.Frame(window, bg="#00aeff")
+frame1 = tk.Frame(window, bg="#b4d4ff")
 frame1.place(relx=0.06, rely=0.16, relwidth=0.43, relheight=0.60)
 
-frame2 = tk.Frame(window, bg="#00aeff")
+frame2 = tk.Frame(window, bg="#b4d4ff")
 frame2.place(relx=0.51, rely=0.16, relwidth=0.43, relheight=0.60)
 
 message3 = tk.Label(window, text="Teacher Insights", fg="white", bg="#262523", width=70,
@@ -703,37 +701,37 @@ tick()
 head2 = tk.Label(frame2,
                  text="                                             For New Registrations                                              ",
                  fg="black",
-                 bg="#3ece48", font=('times', 17, ' bold '))
+                 bg="#008dda", font=('times', 17, ' bold '))
 head2.grid(row=0, column=0)
 
 head1 = tk.Label(frame1,
                  text="                                         For Already Registered                                                 ",
                  fg="black",
-                 bg="#3ece48", font=('times', 17, ' bold '))
+                 bg="#008dda", font=('times', 17, ' bold '))
 head1.place(x=0, y=0)
 
-lbl = tk.Label(frame2, text="Enter ID", width=25, height=1, fg="black", bg="#00aeff", font=('times', 17, ' bold '))
+lbl = tk.Label(frame2, text="Enter ID", width=25, height=1, fg="black", bg="#b4d4ff", font=('times', 17, ' bold '))
 lbl.place(x=5, y=55)
 
 txt = tk.Entry(frame2, width=40, fg="black", font=('times', 15, ' bold '))
 txt.place(x=140, y=88)
 
-lbl2 = tk.Label(frame2, text="Enter Name", width=25, fg="black", bg="#00aeff", font=('times', 17, ' bold '))
+lbl2 = tk.Label(frame2, text="Enter Name", width=25, fg="black", bg="#b4d4ff", font=('times', 17, ' bold '))
 lbl2.place(x=20, y=140)
 
 txt2 = tk.Entry(frame2, width=40, fg="black", font=('times', 15, ' bold '))
 txt2.place(x=140, y=173)
 
-message1 = tk.Label(frame2, text="Step 1) : Take Images  then 2): Save Profile", bg="#00aeff", fg="black", width=50,
+message1 = tk.Label(frame2, text="Step 1) : Take Images  then 2): Save Profile", bg="#b4d4ff", fg="black", width=50,
                     height=1,
                     activebackground="yellow", font=('times', 15, ' bold '))
 message1.place(x=25, y=230)
 
-message = tk.Label(frame2, text="", bg="#00aeff", fg="black", width=39, height=1, activebackground="yellow",
+message = tk.Label(frame2, text="", bg="#b4d4ff", fg="black", width=39, height=1, activebackground="yellow",
                    font=('times', 16, ' bold '))
 message.place(x=40, y=450)
 
-lbl3 = tk.Label(frame1, text="Attendance", width=20, fg="black", bg="#00aeff", height=1, font=('times', 17, ' bold '))
+lbl3 = tk.Label(frame1, text="Attendance", width=20, fg="black", bg="#b4d4ff", height=1, font=('times', 17, ' bold '))
 lbl3.place(x=100, y=115)
 
 res = 0
@@ -792,7 +790,7 @@ takeImg.place(x=142, y=300)
 trainImg = tk.Button(frame2, text="Save Profile", command=psw, fg="white", bg="blue", width=34, height=1,
                      activebackground="white", font=('times', 15, ' bold '))
 trainImg.place(x=142, y=380)
-trackImg = tk.Button(frame1, text="Take Attendance", command=mainFun, fg="black", bg="yellow", width=35, height=1,
+trackImg = tk.Button(frame1, text="Take Attendance", command=mainFun, fg="white", bg="blue", width=35, height=1,
                      activebackground="white", font=('times', 15, ' bold '))
 trackImg.place(x=142, y=50)
 
