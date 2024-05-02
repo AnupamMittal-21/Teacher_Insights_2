@@ -167,7 +167,7 @@ def getHeadStatus(images, classNames):
 
     global best_match_index, matches, faceDis
 
-    with open("encodings.pkl", 'rb') as f:
+    with open("encodings2.pkl", 'rb') as f:
         encode_list_known, names = pickle.load(f)
     print('Encoding File Loaded Successfully...')
 
@@ -427,7 +427,7 @@ def save_lists(list1, list2, filename):
 if __name__ == "__main__":
     raw_images, image_names, ids = preProcessImages()
     # encodeList, correspondingNames = find_encodings(images=raw_images, classNames = image_names)
-    # save_lists(encodeList, correspondingNames, 'encodings.pkl')
-    # print("encodings.pkl` file saved successfully...")
+    # save_lists(encodeList, correspondingNames, 'encodings2.pkl')
+    # print("encodings2.pkl` file saved successfully...")
     getHeadStatus(images=raw_images, classNames=image_names)
     # recognize_faces_in_video(encodeList, names)

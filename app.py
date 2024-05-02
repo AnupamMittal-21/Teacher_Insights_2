@@ -24,7 +24,7 @@ def recognize_faces_api():
         if 'image' not in request.files:
             return jsonify({'error': 'No image file provided'}), 400
 
-        with open("encodings.pkl", 'rb') as f:
+        with open("encodings2.pkl", 'rb') as f:
             saved_encodings, names = pickle.load(f)
         print('Encoding File Loaded Successfully...')
 
