@@ -62,21 +62,25 @@ To install Teacher Insights, follow these steps:
 ### GUI
 
 ![gui](https://github.com/AnupamMittal-21/Teacher_Insights_2/assets/96871662/efaa0c2e-448d-41b8-bcd8-ad53ff3d4fd6)
+
 *Caption: User-friendly GUI for registering students and taking attendance.*
 
 ### Multi-Student Recognition
 
 ![multiple ](https://github.com/AnupamMittal-21/Teacher_Insights_2/assets/96871662/0c7bee99-cc8d-4b69-aba6-3dbcb0202ddb)
+
 *Caption: Detecting and recognizing multiple students simultaneously.*
 
 ### Distance Recognition
 
 ![distance](https://github.com/AnupamMittal-21/Teacher_Insights_2/assets/96871662/89dc4cda-de4c-4328-a2ce-fe0b668c211c)
+
 *Caption: Recognizing faces at a distance using advanced algorithms.*
 
 ### Attentiveness Plot
 
 ![attentive_graph2](https://github.com/AnupamMittal-21/Teacher_Insights_2/assets/96871662/84121b65-7118-4f0b-aca1-32e275fbfe1b)
+
 *Caption: Plotting students' attentiveness over time for data-driven insights.*
 
 ## Contributing
@@ -95,6 +99,6 @@ For any inquiries or feedback, please contact us at [anupammittal1234@gmail.com]
 
 ## Team Members
 
+- **Chhawinder** - [GitHub](https://github.com/chhawinder)
 - **Saloni Aggarwal** - [GitHub](https://github.com/SALONI-AGGARWAL0304)
 - **Swati Aggarwal** - [GitHub](https://github.com/swati1549)
-- **Chhawinder** - [GitHub](https://github.com/chhawinder)
