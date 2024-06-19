@@ -8,7 +8,7 @@ Teacher Insights is a desktop-based application designed to streamline attendanc
 - **User-friendly interface:** Built using Tkinter, providing a simple and intuitive experience for teachers to register students and take attendance.
 - **Face image capture:** Teachers can register students by entering their ID, name, and capturing images directly through the GUI.
 - **Real-time attentiveness assessment:** During class sessions, the application detects faces, evaluates head and eye movements to determine attentiveness, and generates real-time insights.
-- **Attentiveness plot:** Utilizes Plotly library to visualize attentiveness over time for each student, enabling teachers to identify patterns and adjust teaching strategies accordingly.
+- **Live Attentiveness plot:** Utilizes Plotly library to visualize attentiveness over time for each student, enabling teachers to identify patterns and adjust teaching strategies accordingly.
 - **Automated data storage:** Attendance records and attentiveness metrics are saved in CSV files, eliminating the need for manual record-keeping.
 
 ## Future Development
